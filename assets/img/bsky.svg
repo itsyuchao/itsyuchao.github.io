@@ -1,0 +1,23 @@
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <g fill="black">
+    <!-- Left Upper Wing -->
+    <path d="M150 150
+             C 100 60, 30 40, 40 100
+             C 50 160, 90 180, 150 150 Z"></path>
+             
+    <!-- Right Upper Wing -->
+    <path d="M150 150
+             C 200 60, 270 40, 260 100
+             C 250 160, 210 180, 150 150 Z"></path>
+
+    <!-- Left Lower Wing -->
+    <path d="M150 150
+             C 100 180, 50 220, 90 250
+             C 130 270, 140 230, 150 150 Z"></path>
+             
+    <!-- Right Lower Wing -->
+    <path d="M150 150
+             C 200 180, 250 220, 210 250
+             C 170 270, 160 230, 150 150 Z"></path>
+  </g>
+</svg>
