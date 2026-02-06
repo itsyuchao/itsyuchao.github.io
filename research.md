@@ -7,13 +7,12 @@ layout: default
 [back](./)
 
 <h3>Neurorehabilitation</h3>
-- **Wang, Y.**, Huynh, B., Ren, J., Chen, M., Zhang, W., Hu, D., Li, S., Liu, H., Kimberley, T.J. (2025) Somato-cognitive action network in focal dystonia. [Movement Disorders](https://movementdisorders.onlinelibrary.wiley.com/doi/10.1002/mds.70021) 
+- **Wang, Y.**, Huynh, B., Ren, J., Chen, M., Zhang, W., Hu, D., Li, S., Liu, H., Kimberley, T.J. (2025) Somato-cognitive action network in focal dystonia. [*Movement Disorders*](https://movementdisorders.onlinelibrary.wiley.com/doi/10.1002/mds.70021) 
 - **Wang, Y.**, Kelkar, A., Harvey, D.Y., Medaglia, J.D., Hamilton, R., Coslett, H.B. (2023) Motor recovery following rTMS for post-stroke aphasia: A case study with tractography. Poster at [25th Annual Meeting of the Organization for Human Brain Mapping](https://www.humanbrainmapping.org/i4a/pages/index.cfm?pageid=4114). Montréal, Canada.
-- **Wang, Y.**, Hu, D., Addison, R.N., Huynh, B., Liu, H., Kimberley, T.J. (2023) Potential functional changes in superior temporal gyrus in task-specific focal dystonia based on individualized parcellations. Poster at [6th International Dystonia Symposium](https://www.internationaldystoniasymposium.org/). Dublin, Ireland.
 
 <h3>Engineering</h3>
 - **Wang, Y.**, Wang, Y., Vora, I., Huynh, B.P., Picard-Fraser, M., Daneshzand, M., Nummenmaa, A., Kimberley, T.J. (2024) Coils are not created equal: Effects on TMS thresholding. [*Brain Stimulation*](https://linkinghub.elsevier.com/retrieve/pii/S1935861X23019605)
-- **Wang, Y.**, Wartman, W., Vora, I., Miles, A., Huynh, B., Makaroff, S.N., Kimberley, T.J. (2023) Effect of head positioning on TMS intensity: E-field modeling and validation. Oral presentation at [5th International Brain Stimulation Conference](https://www.elsevier.com/events/conferences/international-brain-stimulation-conference/about). Lisbon, Portugal. [Abstract](https://www.brainstimjrnl.com/article/S1935-861X(23)00073-6/fulltext)`
+- **Wang, Y.**, Wartman, W., Vora, I., Miles, A., Huynh, B., Makaroff, S.N., Kimberley, T.J. (2023) Effect of head positioning on TMS intensity: E-field modeling and validation. Oral presentation at [5th International Brain Stimulation Conference](https://www.elsevier.com/events/conferences/international-brain-stimulation-conference/about). Lisbon, Portugal. [Abstract](https://www.brainstimjrnl.com/article/S1935-861X(23)00073-6/fulltext)
 
 
 <h3>Language</h3>
