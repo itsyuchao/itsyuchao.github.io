@@ -7,10 +7,9 @@ layout: default
 [back](./)
 
 <h3>Neurorehabilitation</h3>
-- **Wang, Y.**, Hu, D., Chen, M., Huynh, B., Burns, J., Liu, H., Kimberley, T.J. (2023) Preliminary network changes in action-specific focal dystonia using individualized cortical parcellation. Poster at [Annual Meeting of the Society for Neuroscience](https://www.sfn.org/meetings/neuroscience-2023), Washington, D.C., USA.
+- **Wang, Y.**, Huynh, B., Ren, J., Chen, M., Zhang, W., Hu, D., Li, S., Liu, H., Kimberley, T.J. (2025) Somato-cognitive action network in focal dystonia. [Movement Disorders](https://movementdisorders.onlinelibrary.wiley.com/doi/10.1002/mds.70021) 
 - **Wang, Y.**, Kelkar, A., Harvey, D.Y., Medaglia, J.D., Hamilton, R., Coslett, H.B. (2023) Motor recovery following rTMS for post-stroke aphasia: A case study with tractography. Poster at [25th Annual Meeting of the Organization for Human Brain Mapping](https://www.humanbrainmapping.org/i4a/pages/index.cfm?pageid=4114). Montréal, Canada.
 - **Wang, Y.**, Hu, D., Addison, R.N., Huynh, B., Liu, H., Kimberley, T.J. (2023) Potential functional changes in superior temporal gyrus in task-specific focal dystonia based on individualized parcellations. Poster at [6th International Dystonia Symposium](https://www.internationaldystoniasymposium.org/). Dublin, Ireland.
-- **Wang, Y.**, Harvey, D.Y., Vnenchak, L., Cason, S., Sacchetti, D., Hamilton, R., Coslett, H.B. (2020) Combined rTMS and constraint induced language therapy reveals interactions between language and motor systems: A case study. Poster at [12th Annual Meeting of the Society for the Neurobiology of Language](https://www.neurolang.org/2020/). Online.
 
 <h3>Engineering</h3>
 - **Wang, Y.**, Wang, Y., Vora, I., Huynh, B.P., Picard-Fraser, M., Daneshzand, M., Nummenmaa, A., Kimberley, T.J. (2024) Coils are not created equal: Effects on TMS thresholding. [*Brain Stimulation*](https://linkinghub.elsevier.com/retrieve/pii/S1935861X23019605)
@@ -24,12 +23,12 @@ layout: default
 
 <h3>Perception</h3>
 - Coslett, H.B., Medina, J., Goodman, D.K., **Wang, Y.**, Burkey, A. (2023) Can they touch? A Novel Mental Motor Imagery Task Indexes Back Pain. [*Frontiers in Pain Research*](https://www.frontiersin.org/articles/10.3389/fpain.2023.1189695/full).
-- Kane, S. A., **Wang, Y.**, Fang, R., Lu, Y., & Dakin, R. (2019) How conspicuous are peacock eyespots and other colorful feathers in the eyes of mammalian predators? [*PLOS ONE*](https://doi.org/10.1371/journal.pone.0210924). [Interview](https://www.haverford.edu/college-communications/news/physics-students-publish-peacock-research). [Discovery Canada](https://twitter.com/DiscoveryCanada/status/1281573890129444865?s=20).
+- Kane, S. A., **Wang, Y.**, Fang, R., Lu, Y., & Dakin, R. (2019) How conspicuous are peacock eyespots and other colorful feathers in the eyes of mammalian predators? [*PLOS ONE*](https://doi.org/10.1371/journal.pone.0210924). [Interview](https://www.haverford.edu/college-communications/news/physics-students-publish-peacock-research).
 - Face Perception of Different Species: A Graded N170 Response? (Term paper, 2019) [View](https://drive.google.com/file/d/1UI4O6iI0z1iVAUPjtsSlQANCCL2JlR0X/view?usp=share_link).
 
 <h3>Society</h3>
 - **Wang, Y.** (2017) *Self-Formation: A Philosophical Perspective on the Reconciliation Process at Peace Museums in Japan and China.* Oral presentation at [Asia-Pacific Peace Research Association Conference](https://appra.net/appra-conference-2017/). Penang, Malaysia. [Paper](https://drive.google.com/file/d/1jpVP-thCx1i9Cz97EsreCO6G1F9VQl9O/view?usp=share_link).       
-- Yang, S., **Wang, Y.** (2017) *The Diaries of John Rabe witness the Nanjing Massacre.* Oral presentation at [9th International Conference of Museums for Peace](https://sites.google.com/site/inmpconference/day-3){:target="_blank"}. Belfast, Northern Ireland.
+- Yang, S., **Wang, Y.** (2017) *The Diaries of John Rabe witness the Nanjing Massacre.* Oral presentation at [9th International Conference of Museums for Peace](https://sites.google.com/site/inmpconference/day-3). Belfast, Northern Ireland.
 
 
 [back](./)
