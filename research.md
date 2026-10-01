@@ -29,5 +29,8 @@ layout: default
 - **Wang, Y.** (2017) *Self-Formation: A Philosophical Perspective on the Reconciliation Process at Peace Museums in Japan and China.* Oral presentation at [Asia-Pacific Peace Research Association Conference](https://appra.net/appra-conference-2017/). Penang, Malaysia. [Paper](https://drive.google.com/file/d/1jpVP-thCx1i9Cz97EsreCO6G1F9VQl9O/view?usp=share_link).       
 - Yang, S., **Wang, Y.** (2017) *The Diaries of John Rabe witness the Nanjing Massacre.* Oral presentation at [9th International Conference of Museums for Peace](https://sites.google.com/site/inmpconference/day-3). Belfast, Northern Ireland.
 
+<h3>Tools</h3>
+- [Hemodynamic Balloon Model (Buxton et al. 2004, Neuroimage)](./tools/balloon-model/)
+
 
 [back](./)

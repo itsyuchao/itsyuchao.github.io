@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hemodynamic Balloon Model</title>
+<meta name="description" content="Interactive stimulus-to-BOLD simulator of the hemodynamic model of Buxton, Uludağ, Dubowitz & Liu (2004), NeuroImage 23, S220–S233.">
+<link rel="icon" href="/assets/img/spiral.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/3.1.1/plotly-basic.min.js"></script>
+<script src="model.js"></script>
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #ffffff; --card: #fafafa; --border: #dcdcdc; --text: #222; --muted: #666;
+    --accent: #267CB9;
+    --c-s: #222222; --c-N: #7b2d8b; --c-f: #d62728; --c-m: #2ca02c; --c-v: #1f5fbf;
+    --c-q: #a0522d; --c-b: #111111;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .page { max-width: 1480px; margin: 0 auto; padding: 14px 16px 24px; }
+  header h1 { font-size: 22px; margin: 4px 0 2px; }
+  header .cite { color: var(--muted); margin: 0; }
+  header .intro { margin: 6px 0 0; max-width: 980px; }
+  .back { font-size: 13px; }
+
+  .toolbar { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center;
+             margin: 12px 0; padding: 8px 12px; border: 1px solid var(--border);
+             border-radius: 8px; background: var(--card); }
+  .toolbar label { display: inline-flex; gap: 6px; align-items: center; }
+  .toolbar .note { color: var(--muted); font-size: 12.5px; margin-left: auto; }
+  select, button { font: inherit; }
+  button { padding: 4px 12px; border: 1px solid #bbb; border-radius: 6px; background: #eee; cursor: pointer; }
+  button:hover { background: #ddd; }
+
+  .layout { display: grid; grid-template-columns: minmax(0, 1.85fr) minmax(330px, 1fr); gap: 18px; align-items: start; }
+  .side { position: sticky; top: 10px; }
+
+  .card { border: 1px solid var(--border); border-radius: 8px; background: var(--card); padding: 6px 10px 8px; min-width: 0; }
+  .card-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 12px; }
+  .card-head .name { font-weight: 700; font-size: 14.5px; }
+  .card-head .eq { font-size: 13.5px; max-width: 100%; overflow-x: auto; }
+  .sub { overflow-x: auto; }
+  .sub { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .plot { width: 100%; height: 100px; }
+  .plot.tall { height: 128px; }
+
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .center { width: 72%; margin: 0 auto; }
+  .flow { display: grid; grid-template-columns: 1fr 1fr; text-align: center; color: #555;
+          font-size: 15px; line-height: 1; padding: 3px 0; }
+  .flow span { font-size: 22px; }
+  .flow .l { text-align: right; padding-right: 18%; }
+  .flow .r { text-align: left; padding-left: 18%; }
+  .flow.in .l { text-align: right; padding-right: 8%; }
+  .flow.in .r { text-align: left; padding-left: 8%; }
+
+  .balloon { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; }
+  .balloon .eqs { font-size: 14px; min-width: 0; overflow-x: auto; }
+  .balloon .eqs.left { text-align: right; }
+  .ellipse { border: 1.5px solid #333; border-radius: 50%; padding: 14px 26px; text-align: center; background: #f1f1f1; }
+  .ellipse b { display: block; font-size: 15px; }
+  .ellipse small { color: var(--muted); }
+
+  .sliders { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 0 18px; margin-top: 4px; }
+  .slider { display: grid; grid-template-columns: 40px minmax(90px, 1fr) 42px minmax(0, 1.15fr); align-items: center; gap: 6px; min-height: 24px; }
+  .slider .lab { text-align: right; font-size: 14px; }
+  .slider output { font-variant-numeric: tabular-nums; font-size: 13px; }
+  .slider .desc { color: var(--muted); font-size: 11.5px; line-height: 1.2; }
+  input[type=range] { width: 100%; }
+
+  .side h2 { font-size: 15.5px; margin: 0 0 6px; text-align: center; }
+  .side .card { margin-bottom: 10px; }
+  .side .plot { height: 135px; }
+  .side .plot.qv { height: 300px; }
+  .fig4-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .fig4-btns button { font-weight: 700; }
+
+  footer { margin-top: 18px; color: var(--muted); font-size: 12.5px; border-top: 1px solid var(--border); padding-top: 8px; }
+
+  @media (max-width: 1100px) {
+    .layout { grid-template-columns: minmax(0, 1fr); }
+    .side { position: static; }
+  }
+  @media (max-width: 700px) {
+    .layout { grid-template-columns: minmax(0, 1fr); }
+    .row2 { grid-template-columns: minmax(0, 1fr); }
+    .sliders { grid-template-columns: minmax(0, 1fr); }
+    .slider { grid-template-columns: 36px minmax(0, 1fr) 42px; }
+    .slider .desc { grid-column: 2 / 4; margin-top: -3px; }
+    .ellipse { justify-self: center; }
+    .flow .l, .flow.in .l { padding-right: 6%; }
+    .flow .r, .flow.in .r { padding-left: 6%; }
+    .center { width: 100%; }
+    .balloon { grid-template-columns: 1fr; }
+    .balloon .eqs, .balloon .eqs.left { text-align: center; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <a class="back" href="/research">← back to research</a>
+    <h1>Hemodynamic Balloon Model</h1>
+    <p class="cite">Buxton, R.B., Uludağ, K., Dubowitz, D.J., Liu, T.T. (2004). Modeling the hemodynamic response to brain activation.
+      <em>NeuroImage</em> 23, S220–S233. <a href="https://doi.org/10.1016/j.neuroimage.2004.07.013">doi:10.1016/j.neuroimage.2004.07.013</a></p>
+    <p class="intro">The causal chain of the paper's Fig. 1, from stimulus to measured BOLD signal. Every step is drawn with its
+      equation and the 1–2 parameters (Table 1 notation) that shape it. The right-hand panel recreates Fig. 4: how the timing of
+      CBV and CBF relative to CMRO<sub>2</sub> produces an initial overshoot, a post-stimulus undershoot or an initial dip.
+      Solid = current settings; dotted gray = Table 1 defaults for the same stimulus.</p>
+  </header>
+
+  <div class="toolbar">
+    <label>Stimulus
+      <select id="pattern">
+        <option value="block">Single block (duration D)</option>
+        <option value="pair">Two 1-s events (gap ISI)</option>
+        <option value="fig5">Fig. 5 sequence</option>
+      </select>
+    </label>
+    <label title="Superpose the response to one 1-s event over every second of stimulation (Fig. 5)">
+      <input type="checkbox" id="linpred"> linear prediction (Fig. 5)
+    </label>
+    <button id="reset">Reset</button>
+    <button id="copy" title="Copy a link that restores the current settings">Copy link</button>
+    <span class="note" id="status"></span>
+  </div>
+
+  <div class="layout">
+    <main class="chain">
+      <!-- Neural response (Stimulus drawn inside) -->
+      <section class="card center">
+        <div class="card-head"><span class="name">Stimulus → Neural Response</span>
+          <span class="eq" data-tex="N(t)=s(t)-I(t),\quad \frac{dI}{dt}=\frac{\kappa\,N(t)-I(t)}{\tau_I}\quad\text{(Eq. 14)}"></span></div>
+        <div class="plot" id="p-sN"></div>
+        <div class="sliders" id="s-neural"></div>
+      </section>
+
+      <div class="flow"><div class="l"><span>↙</span> <i>N(t)</i></div><div class="r"><i>N(t)</i> <span>↘</span></div></div>
+
+      <div class="row2">
+        <section class="card">
+          <div class="card-head"><span class="name">CBF Response</span>
+            <span class="eq" data-tex="f(t)=1+(f_1-1)\,h(t-\delta t_f)\ast N(t)\quad\text{(Eq. 13)}"></span></div>
+          <div class="plot" id="p-f"></div>
+          <div class="sub"><span data-tex="h(t)=\frac{(t/\tau_h)^k e^{-t/\tau_h}}{k\,\tau_h\,(k-1)!}"></span> (Eq. 12),
+            <span data-tex="k=3,\ \tau_h=0.242\,\tau_f,\ \tau_f=4\text{ s};\ \delta t_f=\delta t_m+\delta t"></span></div>
+          <div class="sliders" id="s-f"></div>
+        </section>
+        <section class="card">
+          <div class="card-head"><span class="name">CMRO<sub>2</sub> Response</span>
+            <span class="eq" data-tex="m(t)=1+(m_1-1)\,g(t-\delta t_m)\ast N(t)\quad\text{(Eq. 13)}"></span></div>
+          <div class="plot" id="p-m"></div>
+          <div class="sub"><span data-tex="m_1-1=(f_1-1)/n"></span> (Eq. 3) <span id="m1"></span>;
+            <span data-tex="\tau_m=4\text{ s},\ \delta t_m=1\text{ s}"></span></div>
+          <div class="sliders" id="s-m"></div>
+        </section>
+      </div>
+
+      <div class="flow in"><div class="l"><i>f(t)</i> <span>↘</span></div><div class="r"><span>↙</span> <i>m(t)</i></div></div>
+
+      <section class="card">
+        <div class="balloon">
+          <div class="eqs left">
+            <div data-tex="\frac{dv}{dt}=\frac{1}{\tau_{\mathrm{MTT}}}\bigl[f(t)-f_{\mathrm{out}}(v,t)\bigr]"></div>
+            <div data-tex="f_{\mathrm{out}}(v)=v^{1/\alpha}+\tau\,\frac{dv}{dt},\ \ \tau=\tau_+\text{ or }\tau_-\quad\text{(Eq. 11)}"></div>
+          </div>
+          <div class="ellipse"><b>Balloon Model</b><small>Eqs. 10–11</small></div>
+          <div class="eqs">
+            <div data-tex="\frac{dq}{dt}=\frac{1}{\tau_{\mathrm{MTT}}}\Bigl[f(t)\frac{E(t)}{E_0}-\frac{q(t)}{v(t)}\,f_{\mathrm{out}}(v,t)\Bigr]"></div>
+            <div data-tex="f(t)\,E(t)/E_0=m(t)\quad\text{(Eq. 2)}"></div>
+          </div>
+        </div>
+        <div class="sliders" id="s-balloon"></div>
+      </section>
+
+      <div class="flow"><div class="l"><span>↙</span> <i>v(t)</i></div><div class="r"><i>q(t)</i> <span>↘</span></div></div>
+
+      <div class="row2">
+        <section class="card">
+          <div class="card-head"><span class="name">CBV Response</span>
+            <span class="eq" data-tex="v(t);\ \text{steady state } v=f^{\alpha}\quad\text{(Eq. 1)}"></span></div>
+          <div class="plot" id="p-v"></div>
+          <div class="sliders" id="s-v"></div>
+        </section>
+        <section class="card">
+          <div class="card-head"><span class="name">Deoxy-Hb Response</span>
+            <span class="eq" data-tex="q(t)\text{: total deoxyHb}\quad\text{(Eq. 10)}"></span></div>
+          <div class="plot" id="p-q"></div>
+          <div class="sliders" id="s-q"></div>
+        </section>
+      </div>
+
+      <div class="flow in"><div class="l"><i>v(t)</i> <span>↘</span></div><div class="r"><span>↙</span> <i>q(t)</i></div></div>
+
+      <section class="card center">
+        <div class="card-head"><span class="name">BOLD Response</span>
+          <span class="eq" data-tex="\frac{\Delta S}{S}=V_0\,\bigl[a_1(1-q)-a_2(1-v)\bigr]\quad\text{(Eq. 9)}"></span></div>
+        <div class="plot tall" id="p-b"></div>
+        <div class="sub"><span data-tex="a_1=3.4,\ a_2=1.0"></span> (1.5 T, TE = 40 ms; Obata et al., 2004)</div>
+        <div class="sliders" id="s-b"></div>
+      </section>
+    </main>
+
+    <aside class="side">
+      <h2>Timing transients (cf. Fig. 4)</h2>
+      <section class="card">
+        <div class="card-head"><span class="name">Hemodynamics (current)</span></div>
+        <div class="plot" id="p-hd"></div>
+      </section>
+      <section class="card">
+        <div class="card-head"><span class="name">BOLD Signal</span><span class="sub">each variant uses the current non-timing settings</span></div>
+        <div class="plot" id="p-bs"></div>
+      </section>
+      <section class="card">
+        <div class="card-head"><span class="name"><i>q</i>/<i>v</i> plane</span>
+          <span class="sub">bands: Eq. 9 in 0.5 % steps, lighter = higher BOLD</span></div>
+        <div class="plot qv" id="p-qv"></div>
+      </section>
+      <div class="fig4-btns" id="fig4-btns"></div>
+      <p class="sub">Buttons set <span data-tex="\tau_+,\ \tau_-,\ \delta t"></span> to a Fig. 4 variant; other settings are kept.</p>
+    </aside>
+  </div>
+
+  <footer>
+    Model equations and parameters follow Buxton et al. (2004), Fig. 1, Table 1 and Eqs. 1–14; figures are recomputed from the equations,
+    not reproduced. Notes: Fig. 4B uses the caption's τ<sub>+</sub> = τ<sub>−</sub> = 20 s; Fig. 4C is read as τ<sub>+</sub> = 0,
+    τ<sub>−</sub> = 20 s, δt = 1 s; κ extends to 3 (Fig. 5B) beyond Table 1's 0–2.<br>
+    Adapted into Python and into a static page with <a href="https://claude.com/claude-code">Claude Code</a> (Claude Opus 5.5). Fully static to be hosted on github page; model code: <a href="model.js">model.js</a>.
+  </footer>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const M = window.BalloonModel;
+  const DT = 0.05;
+  const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const COLOR = { s: css("--c-s"), N: css("--c-N"), f: css("--c-f"), m: css("--c-m"), v: css("--c-v"), q: css("--c-q"), b: css("--c-b") };
+  const VARIANT_COLOR = { A: "#8c8c8c", B: "#ff7f0e", C: "#17a2b8" };
+  const VARIANT_LABEL = { A: "A: τ₊ = τ₋ = 0, δt = 0", B: "B: τ₊ = τ₋ = 20 s", C: "C: τ₋ = 20 s, δt = 1 s" };
+
+  // Sliders: [key, TeX label, min, max, step, decimals, description, container]
+  const SLIDERS = [
+    ["D", "D", 1, 40, 1, 0, "stimulus duration (s)", "s-neural"],
+    ["ISI", "\\mathrm{ISI}", 0, 20, 0.5, 1, "gap between the two 1-s events (s)", "s-neural"],
+    ["kappa", "\\kappa", 0, 3, 0.05, 2, "inhibitory gain (adaptation)", "s-neural"],
+    ["tau_I", "\\tau_I", 1, 3, 0.05, 2, "inhibitory time constant (s); only acts when κ > 0", "s-neural"],
+    ["f1", "f_1", 1, 2, 0.01, 2, "CBF response to sustained N = 1", "s-f"],
+    ["delta_t", "\\delta t", 0, 2, 0.05, 2, "delay of CBF relative to CMRO₂ (s)", "s-f"],
+    ["n", "n", 1.1, 5, 0.05, 2, "CBF/CMRO₂ coupling, (f−1)/(m−1)", "s-m"],
+    ["tau_plus", "\\tau_+", 0, 30, 0.5, 1, "viscoelastic time constant, inflation (s)", "s-balloon"],
+    ["tau_minus", "\\tau_-", 0, 30, 0.5, 1, "viscoelastic time constant, deflation (s)", "s-balloon"],
+    ["alpha", "\\alpha", 0.2, 0.6, 0.01, 2, "steady-state flow–volume exponent", "s-v"],
+    ["tau_MTT", "\\tau_{\\mathrm{MTT}}", 1, 6, 0.1, 1, "transit time through the balloon, V₀/F₀ (s)", "s-q"],
+    ["V0", "V_0", 0.01, 0.06, 0.001, 3, "baseline venous blood volume fraction", "s-b"],
+  ];
+
+  const tex = (el, s) => katex.render(s, el, { throwOnError: false });
+  document.querySelectorAll("[data-tex]").forEach((el) => tex(el, el.dataset.tex));
+
+  // ---------- state ----------
+  const state = { p: { ...M.DEFAULTS }, pattern: "block", linpred: false };
+  const inputs = {};
+  for (const [key, label, min, max, step, dec, desc, box] of SLIDERS) {
+    const wrap = document.createElement("div");
+    wrap.className = "slider";
+    wrap.dataset.key = key;
+    wrap.innerHTML = `<span class="lab"></span><input type="range" min="${min}" max="${max}" step="${step}"
+      aria-label="${key}"><output></output><span class="desc">${desc}</span>`;
+    tex(wrap.querySelector(".lab"), label);
+    const input = wrap.querySelector("input"), out = wrap.querySelector("output");
+    input.addEventListener("input", () => {
+      state.p[key] = +input.value;
+      out.textContent = (+input.value).toFixed(dec);
+      schedule();
+    });
+    inputs[key] = { input, out, dec, wrap };
+    document.getElementById(box).appendChild(wrap);
+  }
+  const patternSel = document.getElementById("pattern"), linpredBox = document.getElementById("linpred");
+
+  function syncControls() {
+    for (const [key, { input, out, dec }] of Object.entries(inputs)) {
+      input.value = state.p[key];
+      out.textContent = (+state.p[key]).toFixed(dec);
+    }
+    patternSel.value = state.pattern;
+    linpredBox.checked = state.linpred;
+    inputs.D.wrap.style.display = state.pattern === "block" ? "" : "none";
+    inputs.ISI.wrap.style.display = state.pattern === "pair" ? "" : "none";
+  }
+
+  // URL hash <-> state
+  function readHash() {
+    const h = new URLSearchParams(location.hash.slice(1));
+    if (["block", "pair", "fig5"].includes(h.get("pattern"))) state.pattern = h.get("pattern");
+    state.linpred = h.get("linpred") === "1";
+    for (const key of Object.keys(M.DEFAULTS)) {
+      const val = parseFloat(h.get(key));
+      if (Number.isFinite(val)) state.p[key] = val;
+    }
+  }
+  function hashString() {
+    const h = new URLSearchParams({ pattern: state.pattern, linpred: state.linpred ? "1" : "0" });
+    for (const key of Object.keys(M.DEFAULTS)) h.set(key, state.p[key]);
+    return h.toString();
+  }
+
+  // ---------- plotting ----------
+  const PCONF = { displayModeBar: false, responsive: true };
+  const baseLayout = (extra = {}) => ({
+    margin: { l: 46, r: 8, t: 6, b: 24 }, paper_bgcolor: "rgba(0,0,0,0)", plot_bgcolor: "#fff",
+    font: { family: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif", size: 11, color: "#333" },
+    showlegend: false, hovermode: "x unified",
+    xaxis: { gridcolor: "#eee", zeroline: false, ticks: "outside", ticklen: 3 },
+    yaxis: { gridcolor: "#eee", zeroline: false, ticks: "outside", ticklen: 3 },
+    ...extra,
+  });
+  const line = (x, y, color, name, { line: style = {}, ...rest } = {}) =>
+    ({ x, y, type: "scatter", mode: "lines", name, line: { color, width: 2, ...style }, ...rest });
+  const ref = (x, y, name = "Table 1 default") => line(x, y, "#9a9a9a", name, { line: { dash: "dot", width: 1.6 } });
+
+  function panel(id, traces, ylab, extra = {}) {
+    const lay = baseLayout(extra);
+    lay.yaxis = { ...lay.yaxis, title: { text: ylab, standoff: 4 } };
+    if (extra.xtitle) {
+      lay.xaxis = { ...lay.xaxis, title: { text: "time (s)", standoff: 4 } };
+      lay.margin = { ...lay.margin, b: 36 };
+    }
+    Plotly.react(id, traces, lay, PCONF);
+  }
+
+  function qvPlane(res, V0) {
+    const qs = [res.q, ...Object.values(res.fig4).map((r) => r.q)];
+    const vs = [res.v, ...Object.values(res.fig4).map((r) => r.v)];
+    const mn = (arrs) => Math.min(...arrs.map((a) => Math.min(...a)));
+    const mx = (arrs) => Math.max(...arrs.map((a) => Math.max(...a)));
+    const q0 = Math.min(0.85, mn(qs) - 0.02), q1 = Math.max(1.10, mx(qs) + 0.02);
+    const v0 = Math.min(0.90, mn(vs) - 0.02), v1 = Math.max(1.25, mx(vs) + 0.02);
+    // Eq. 9 is linear in (q, v): constant-BOLD lines v = 1 + (b/(100 V0) − a1 (1 − q)) / a2
+    const vAt = (b, q) => 1 + (b / (100 * V0) - M.A1 * (1 - q)) / M.A2;
+    const corners = [[q0, v0], [q0, v1], [q1, v0], [q1, v1]].map(([q, v]) => 100 * V0 * (M.A1 * (1 - q) - M.A2 * (1 - v)));
+    const bLo = Math.floor(Math.min(...corners) * 2) / 2, bHi = Math.ceil(Math.max(...corners) * 2) / 2;
+    const traces = [], annotations = [];
+    for (let b = bLo; b < bHi - 1e-9; b += 0.5) {
+      const frac = (b + 0.5 / 2 - bLo) / Math.max(bHi - bLo, 1e-9);   // 0 = lowest band (darkest)
+      const g = Math.round(95 + 160 * frac);
+      traces.push({ x: [q0, q1, q1, q0, q0], y: [vAt(b, q0), vAt(b, q1), vAt(b + 0.5, q1), vAt(b + 0.5, q0), vAt(b, q0)],
+                    type: "scatter", mode: "lines", fill: "toself", fillcolor: `rgba(${g},${g},${g},0.75)`,
+                    line: { color: "rgba(60,60,60,0.5)", width: 0.6 }, hoverinfo: "skip" });
+      const bl = Math.round(b * 2) / 2;
+      if (Math.abs(bl - Math.round(bl)) < 1e-9) {           // label whole-percent lines along the top edge
+        const qTop = 1 - (bl / (100 * V0) + M.A2 * (1 - v1)) / M.A1;
+        if (qTop > q0 + 0.01 && qTop < q1 - 0.01)
+          annotations.push({ x: qTop, y: v1, text: `${bl.toFixed(0)}%`, showarrow: false, yshift: 7,
+                             font: { size: 10, color: "#444" } });
+      }
+    }
+    for (const k of Object.keys(res.fig4))
+      traces.push({ x: res.fig4[k].q, y: res.fig4[k].v, type: "scatter", mode: "lines", name: VARIANT_LABEL[k],
+                    line: { color: VARIANT_COLOR[k], width: 1.5, dash: "dash" }, hoverinfo: "skip" });
+    traces.push({ x: res.q, y: res.v, type: "scatter", mode: "lines", name: "current",
+                  line: { color: COLOR.b, width: 2.4 }, hovertemplate: "q=%{x:.3f}<br>v=%{y:.3f}<extra>current</extra>" });
+    traces.push({ x: [1], y: [1], type: "scatter", mode: "markers", marker: { color: "red", size: 9 },
+                  hovertemplate: "baseline q = v = 1<extra></extra>" });
+    // direction arrows on the current trajectory: rising and falling phase
+    const on = res.events[0][0], dur = res.events[res.events.length - 1][0] + res.events[res.events.length - 1][1] - on;
+    for (const tt of [on + 4, on + dur + 4]) {
+      const i = Math.round(tt / DT);
+      if (i + 6 < res.q.length)
+        annotations.push({ x: res.q[i + 6], y: res.v[i + 6], ax: res.q[i], ay: res.v[i], xref: "x", yref: "y",
+                           axref: "x", ayref: "y", showarrow: true, arrowhead: 2, arrowsize: 1.3, arrowwidth: 1.6,
+                           arrowcolor: COLOR.b, text: "" });
+    }
+    const lay = baseLayout({ hovermode: "closest", annotations, margin: { l: 46, r: 8, t: 18, b: 34 } });
+    lay.xaxis = { ...lay.xaxis, range: [q0, q1], title: { text: "q (total deoxyHb)", standoff: 2 } };
+    lay.yaxis = { ...lay.yaxis, range: [v0, v1], title: { text: "v (blood volume)", standoff: 4 } };
+    Plotly.react("p-qv", traces, lay, PCONF);
+  }
+
+  // ---------- update ----------
+  let pending = false;
+  function schedule() {
+    if (!pending) { pending = true; requestAnimationFrame(() => { pending = false; update(); }); }
+  }
+
+  function update() {
+    const t0 = performance.now();
+    const p = state.p;
+    const { events, tMax } = M.stimulusEvents(state.pattern, p);
+    const t = Array.from(M.timeGrid(tMax, DT));
+    const res = M.simulate(t, events, p, DT, { variants: true });
+    res.events = events;
+    const def = M.simulate(t, events, { ...M.DEFAULTS, D: p.D, ISI: p.ISI }, DT);
+    const lp = state.linpred ? M.linearPrediction(t, events, p, DT) : null;
+    const xr = { xaxis: { gridcolor: "#eee", zeroline: false, ticks: "outside", ticklen: 3, range: [0, tMax] } };
+    const lpTrace = (y) => line(t, y, "#555", "linear prediction", { line: { dash: "dash", width: 1.6 } });
+
+    panel("p-sN", [line(t, res.s, COLOR.s, "s(t)", { line: { width: 1.4, shape: "hv" } }),
+                   ref(t, def.N), line(t, res.N, COLOR.N, "N(t)")], "s(t), N(t)", xr);
+    panel("p-f", [ref(t, def.f), line(t, res.f, COLOR.f, "f(t)"), ...(lp ? [lpTrace(lp.f)] : [])], "f(t)", xr);
+    panel("p-m", [ref(t, def.m), line(t, res.m, COLOR.m, "m(t)")], "m(t)", xr);
+    panel("p-v", [ref(t, def.v), line(t, res.v, COLOR.v, "v(t)")], "v(t)", xr);
+    panel("p-q", [ref(t, def.q), line(t, res.q, COLOR.q, "q(t)")], "q(t)", xr);
+    panel("p-b", [ref(t, def.b), line(t, res.b, COLOR.b, "BOLD"), ...(lp ? [lpTrace(lp.b)] : [])],
+          "b(t) (%)", { ...xr, xtitle: true, showlegend: !!lp,
+                        legend: { orientation: "h", x: 1, xanchor: "right", y: 1, font: { size: 10 } } });
+    document.getElementById("m1").textContent = `→ m₁ = ${res.m1.toFixed(3)}`;
+
+    panel("p-hd", [line(t, res.f, COLOR.f, "CBF"), line(t, res.m, COLOR.m, "CMRO<sub>2</sub>"), line(t, res.v, COLOR.v, "CBV")],
+          "normalized", { ...xr, showlegend: true, legend: { x: 1, xanchor: "right", y: 1, font: { size: 10 }, bgcolor: "rgba(255,255,255,0.7)" } });
+    panel("p-bs", [...Object.keys(res.fig4).map((k) => line(t, res.fig4[k].b, VARIANT_COLOR[k], VARIANT_LABEL[k],
+                                                              { line: { dash: "dash", width: 1.5 } })),
+                   line(t, res.b, COLOR.b, "current", { line: { width: 2.4 } })],
+          "b(t) (%)", { ...xr, xtitle: true, showlegend: true,
+                        legend: { x: 1, xanchor: "right", y: 1, font: { size: 10 }, bgcolor: "rgba(255,255,255,0.7)" } });
+    qvPlane(res, p.V0);
+    document.getElementById("status").textContent = `recomputed in ${(performance.now() - t0).toFixed(0)} ms`;
+  }
+
+  // ---------- controls ----------
+  patternSel.addEventListener("change", () => { state.pattern = patternSel.value; syncControls(); schedule(); });
+  linpredBox.addEventListener("change", () => { state.linpred = linpredBox.checked; schedule(); });
+  document.getElementById("reset").addEventListener("click", () => {
+    Object.assign(state, { p: { ...M.DEFAULTS }, pattern: "block", linpred: false });
+    syncControls(); schedule();
+  });
+  document.getElementById("copy").addEventListener("click", async () => {
+    history.replaceState(null, "", `#${hashString()}`);
+    try { await navigator.clipboard.writeText(location.href); document.getElementById("status").textContent = "link copied"; }
+    catch { document.getElementById("status").textContent = "link is in the address bar"; }
+  });
+  const btnBox = document.getElementById("fig4-btns");
+  for (const k of Object.keys(M.FIG4)) {
+    const b = document.createElement("button");
+    b.textContent = `Fig. 4${k}`;
+    b.style.color = VARIANT_COLOR[k];
+    b.title = VARIANT_LABEL[k];
+    b.addEventListener("click", () => { Object.assign(state.p, M.FIG4[k]); syncControls(); schedule(); });
+    btnBox.appendChild(b);
+  }
+
+  readHash();
+  syncControls();
+  update();
+})();
+</script>
+<script data-goatcounter="https://itsyuchao.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
